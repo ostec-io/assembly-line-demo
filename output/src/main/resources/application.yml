@@ -1,0 +1,102 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: focusflow
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/focus_flow}
+  jackson:
+    default-property-inclusion: non_null
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
+      resource-attributes:
+        "service.name": ${OTEL_SERVICE_NAME:${spring.application.name}}
+
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8080}
+  realm: ${KEYCLOAK_REALM:platform-dev}
+
+ostec:
+  security:
+    enabled: true
+    jwt:
+      issuer-uri: ${SECURITY_JWT_ISSUER_URI:${keycloak.auth-server-url}/realms/${keycloak.realm}}
+      expected-audience: ${SECURITY_JWT_AUDIENCE:focusflow-api}
+      jwks-cache-ttl: 5m
+      validate-issuer: true
+      validate-audience: true
+    tenant:
+      enforce-isolation: true
+      tenant-claim-name: tenant
+      org-claim-name: org
+      require-tenant-id: true
+      require-org-id: true
+    public-paths:
+      - /actuator/**
+      - /health/**
+      - /swagger-ui/**
+      - /swagger-ui.html
+      - /api-docs/**
+      - /v3/api-docs/**
+      - /error
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+otel:
+  service:
+    name: ${OTEL_SERVICE_NAME:${spring.application.name}}
+
+focusflow:
+  outbox:
+    publisher-interval-ms: ${OUTBOX_PUBLISHER_INTERVAL_MS:5000}
+  metrics:
+    outbox-lag-publish-interval-ms: ${OUTBOX_METRICS_PUBLISH_INTERVAL_MS:15000}
+  ai:
+    provider:
+      endpoint: ${AI_PROVIDER_ENDPOINT:}
+      api-key: ${AI_PROVIDER_API_KEY:}
+      name: ${AI_PROVIDER_NAME:external-ai}
+      model: ${AI_PROVIDER_MODEL:plan-model-v1}
+      timeout-ms: ${AI_PROVIDER_TIMEOUT_MS:2500}
+    fallback:
+      template-version: ${AI_FALLBACK_TEMPLATE_VERSION:v1}
+  billing:
+    stripe:
+      api-key: ${STRIPE_API_KEY:}
+      webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+  eventing:
+    topic-prefix: ${EVENT_TOPIC_PREFIX:focusflow}
+    consumer-group: ${EVENT_CONSUMER_GROUP:focusflow}
+    consumer-lag-publish-interval-ms: ${EVENT_CONSUMER_LAG_PUBLISH_INTERVAL_MS:15000}
+
+logging:
+  level:
+    root: INFO
+    io.ostec.focusflow: INFO
+  pattern:
+    level: "%5p [corr=%X{correlationId:-na}] [tenant=%X{tenantId:-na}] [org=%X{orgId:-na}]"
