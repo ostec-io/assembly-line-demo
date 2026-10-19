@@ -14,7 +14,7 @@ No editor was opened. No prompt was written. A three-station assembly line proce
 
 | Stage | Agent | Input | Output | Time |
 |-------|-------|-------|--------|------|
-| **Station 1** | DDD Specialist | Raw PRD (380 lines) | Domain-Driven Design specification — 8 subdomains, 6 bounded contexts | ~8 min |
+| **Station 1** | DDD Specialist | Raw PRD (380 lines) | Domain-Driven Design specification — 8 subdomains, 7 bounded contexts | ~8 min |
 | **Station 2** | Component Architect | DDD specification | Spring Boot component outline — documents, repositories, services, controllers, DTOs, events per context | ~5 min |
 | **Station 3** | Code Foreman | Component outline | 24 sequential implementation tasks across 7 bounded contexts, assigned to a code worker agent | ~12 min |
 | **Execution** | Code Worker | 24 task briefings | 200 Java files, 19,076 lines of code | ~2.5 hrs |
@@ -115,9 +115,9 @@ The generated code follows these conventions throughout:
 
 ---
 
-## Note
+## Limitations
 
-This is generated output, not a production-ready application. It has not been compiled, tested, or integrated. It represents the structured starting point that the assembly line produces — architecturally sound, consistently patterned, and ready for human review and refinement.
+This is generated output, not a production-ready application. It has not been compiled, tested, or integrated, and the repository contains no tests. It represents the structured starting point that the assembly line produces — consistently patterned and ready for human review and refinement.
 
 The value isn't in any single generated file. It's in the system that coordinated 24 tasks across 7 bounded contexts from a single input document.
 
